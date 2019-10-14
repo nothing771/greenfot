@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<class name="Rocket" extends="Mover" extends-java="Mover" enable="true" strideversion="1">
+    <javadoc xml:space="preserve">A rocket that can be controlled by the arrowkeys: up, left, right. The gun is fired by hitting the 'space' key.
+@author Poul Henriksen @author Michael Kolling</javadoc>
+    <imports>
+        <import target="greenfoot.*" enable="true"/>
+    </imports>
+    <implements/>
+    <fields>
+        <comment xml:space="preserve">(World, Actor, GreenfootImage, and Greenfoot)</comment>
+        <variable access="private" type="int" type-java="int" name="gunReloadTime" enable="true"/>
+        <comment xml:space="preserve">The minimum delay between firing the gun.</comment>
+        <variable access="private" type="int" type-java="int" name="reloadDelayCount" enable="true"/>
+        <comment xml:space="preserve">How long ago we fired the gun the last time.</comment>
+        <variable access="private" type="Vector" type-java="Vector" name="acceleration" enable="true"/>
+        <comment xml:space="preserve">How fast the rocket is. 20</comment>
+        <variable access="private" type="int" type-java="int" name="shotsFired" enable="true"/>
+        <comment xml:space="preserve">Number of shots fired.</comment>
+        <variable access="private" type="GreenfootImage" type-java="GreenfootImage" name="rocket" value="new GreenfootImage(&quot;rocket.png&quot;)" value-java=" new GreenfootImage(&quot;rocket.png&quot;)" enable="true"/>
+        <variable access="private" type="GreenfootImage" type-java="GreenfootImage" name="rocketWithThrust" value="new GreenfootImage(&quot;rocketWithThrust.png&quot;)" value-java=" new GreenfootImage(&quot;rocketWithThrust.png&quot;)" enable="true"/>
+    </fields>
+    <constructors>
+        <constructor access="public" enable="true">
+            <javadoc xml:space="preserve">Initilise this rocket.</javadoc>
+            <params/>
+            <throws/>
+            <body>
+                <assign dest="gunReloadTime" dest-java="gunReloadTime" src="1" src-java="1" enable="true"/>
+                <assign dest="reloadDelayCount" dest-java="reloadDelayCount" src="0" src-java="0" enable="true"/>
+                <assign dest="acceleration" dest-java="acceleration" src="new Vector(0,0.3)" src-java=" new Vector(0, 0.3)" enable="true"/>
+                <call expression="increaseSpeed(new Vector(13,0.3))" expression-java="increaseSpeed( new Vector(13, 0.3))" enable="true"/>
+                <comment xml:space="preserve">initially slowly drifting</comment>
+                <assign dest="shotsFired" dest-java="shotsFired" src="5" src-java="5" enable="true"/>
+            </body>
+        </constructor>
+    </constructors>
+    <methods>
+        <method access="public" type="void" type-java="void" name="act" enable="true">
+            <javadoc xml:space="preserve">Do what a rocket's gotta do. (Which is: mostly flying about, and turning, accelerating and shooting when the right keys are pressed.)</javadoc>
+            <params/>
+            <throws/>
+            <body>
+                <call expression="move()" expression-java="move()" enable="true"/>
+                <call expression="checkCollision()" expression-java="checkCollision()" enable="true"/>
+                <call expression="checkKeys()" expression-java="checkKeys()" enable="true"/>
+                <assign dest="reloadDelayCount" dest-java="reloadDelayCount" src="reloadDelayCount+1" src-java="reloadDelayCount + 1" enable="true"/>
+            </body>
+        </method>
+        <method access="public" type="int" type-java="int" name="getShotsFired" enable="true">
+            <javadoc xml:space="preserve">Return the number of shots fired from this rocket.</javadoc>
+            <params/>
+            <throws/>
+            <body>
+                <return value="shotsFired" value-java="shotsFired" enable="true"/>
+            </body>
+        </method>
+        <method access="public" type="int" type-java="int" name="getSpeed" enable="true">
+            <javadoc xml:space="preserve">Return the approximate current travelling speed of this rocket.</javadoc>
+            <params/>
+            <throws/>
+            <body>
+                <return value="(int)(getMovement().getLength()*8)" value-java="(int)(getMovement().getLength() * 8)" enable="true"/>
+            </body>
+        </method>
+        <method access="public" type="void" type-java="void" name="setGunReloadTime" enable="true">
+            <javadoc xml:space="preserve">Set the time needed for re-loading the rocket's gun. The shorter this time is, the faster the rocket can fire. The (initial) standard time is 20.</javadoc>
+            <params>
+                <param type="int" type-java="int" name="reloadTime"/>
+            </params>
+            <throws/>
+            <body>
+                <assign dest="gunReloadTime" dest-java="gunReloadTime" src="reloadTime" src-java="reloadTime" enable="true"/>
+            </body>
+        </method>
+        <method access="private" type="void" type-java="void" name="checkCollision" enable="true">
+            <javadoc xml:space="preserve">Check whether we are colliding with an asteroid.</javadoc>
+            <params/>
+            <throws/>
+            <body>
+                <variable type="Asteroid" type-java="Asteroid" name="a" value="(Asteroid)getOneIntersectingObject(Asteroid.class)" value-java="(Asteroid)getOneIntersectingObject(Asteroid.class)" enable="true"/>
+                <if condition="a!=null" condition-java="a != null" enable="true">
+                    <ifStatements>
+                        <call expression="getWorld().addObject(new Explosion(),getX(),getY())" expression-java="getWorld().addObject( new Explosion(), getX(), getY())" enable="true"/>
+                        <call expression="getWorld().removeObject(this)" expression-java="getWorld().removeObject(this)" enable="true"/>
+                    </ifStatements>
+                </if>
+            </body>
+        </method>
+        <method access="private" type="void" type-java="void" name="checkKeys" enable="true">
+            <javadoc xml:space="preserve">Check whether there are any key pressed and react to them.</javadoc>
+            <params/>
+            <throws/>
+            <body>
+                <call expression="ignite(Greenfoot.isKeyDown(&quot;up&quot;))" expression-java="ignite(Greenfoot.isKeyDown(&quot;up&quot;))" enable="true"/>
+                <if condition="Greenfoot.isKeyDown(&quot;left&quot;)" condition-java="Greenfoot.isKeyDown(&quot;left&quot;)" enable="true">
+                    <ifStatements>
+                        <call expression="setRotation(getRotation()-5)" expression-java="setRotation(getRotation() - 5)" enable="true"/>
+                    </ifStatements>
+                </if>
+                <if condition="Greenfoot.isKeyDown(&quot;right&quot;)" condition-java="Greenfoot.isKeyDown(&quot;right&quot;)" enable="true">
+                    <ifStatements>
+                        <call expression="setRotation(getRotation()+5)" expression-java="setRotation(getRotation() + 5)" enable="true"/>
+                    </ifStatements>
+                </if>
+                <if condition="Greenfoot.isKeyDown(&quot;space&quot;)" condition-java="Greenfoot.isKeyDown(&quot;space&quot;)" enable="true">
+                    <ifStatements>
+                        <call expression="fire()" expression-java="fire()" enable="true"/>
+                    </ifStatements>
+                </if>
+            </body>
+        </method>
+        <method access="private" type="void" type-java="void" name="ignite" enable="true">
+            <javadoc xml:space="preserve">Should the rocket be ignited?</javadoc>
+            <params>
+                <param type="boolean" type-java="boolean" name="boosterOn"/>
+            </params>
+            <throws/>
+            <body>
+                <if condition="boosterOn" condition-java="boosterOn" enable="true">
+                    <ifStatements>
+                        <call expression="setImage(rocketWithThrust)" expression-java="setImage(rocketWithThrust)" enable="true"/>
+                        <call expression="acceleration.setDirection(getRotation())" expression-java="acceleration.setDirection(getRotation())" enable="true"/>
+                        <call expression="increaseSpeed(acceleration)" expression-java="increaseSpeed(acceleration)" enable="true"/>
+                    </ifStatements>
+                    <else>
+                        <call expression="setImage(rocket)" expression-java="setImage(rocket)" enable="true"/>
+                    </else>
+                </if>
+            </body>
+        </method>
+        <method access="private" type="void" type-java="void" name="fire" enable="true">
+            <javadoc xml:space="preserve">Fire a bullet if the gun is ready.</javadoc>
+            <params/>
+            <throws/>
+            <body>
+                <if condition="reloadDelayCount&gt;=gunReloadTime" condition-java="reloadDelayCount &gt;= gunReloadTime" enable="true">
+                    <ifStatements>
+                        <variable type="Bullet" type-java="Bullet" name="b" value="new Bullet(getMovement().copy(),getRotation())" value-java=" new Bullet(getMovement().copy(), getRotation())" enable="true"/>
+                        <call expression="getWorld().addObject(b,getX(),getY())" expression-java="getWorld().addObject(b, getX(), getY())" enable="true"/>
+                        <call expression="b.move()" expression-java="b.move()" enable="true"/>
+                        <assign dest="shotsFired" dest-java="shotsFired" src="shotsFired+1" src-java="shotsFired + 1" enable="true"/>
+                        <assign dest="reloadDelayCount" dest-java="reloadDelayCount" src="0" src-java="0" enable="true"/>
+                    </ifStatements>
+                </if>
+            </body>
+        </method>
+    </methods>
+</class>
